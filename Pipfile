@@ -10,6 +10,7 @@ langchain-openai = "*"
 langchain-community = "*"
 langchainhub = "*"
 tavily-python = "*"
+flasj = "*"
 
 [dev-packages]
 

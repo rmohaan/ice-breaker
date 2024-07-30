@@ -10,7 +10,10 @@ from langchain.agents import ( create_react_agent, AgentExecutor )
 
 load_dotenv()
 
-def lookup(name: str) -> str:
+def lookup(name: str, mock: bool = False) -> str:
+    if mock:
+        return "https://www.linkedin.com/in/eden-marco/"
+
     llm = ChatOllama(model="llama3")
 
     template = """given the full name {name_of_person} of the LinkedIn user, get me the LinkedIn profile url.
