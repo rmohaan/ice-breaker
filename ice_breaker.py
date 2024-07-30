@@ -7,7 +7,7 @@ from langchain.chains import LLMChain
 from dotenv import load_dotenv
 from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
 from third_parties import linkedin
-
+from output_parsers import summary_parser
 
 # information = """
 # Ilaiyaraaja (born R. Gnanathesigan, 3 June 1943) is an Indian musician, composer, arranger, conductor, orchestrator, multi-instrumentalist, lyricist and playback singer popular for his works in Indian cinema, mainly in Tamil and Telugu films. Reputed to be one of the most prolific composer, in a career spanning over forty-eight years, he has composed over 7,000 songs and provided film scores for over 1,000 films,[1] apart from performing in over 20,000 concerts.[2] He is nicknamed "Isaignani" (the musical sage) and is often referred to as "Maestro", the title conferred to him by the Royal Philharmonic Orchestra, London.[3]
@@ -27,15 +27,20 @@ def ice_break_with(name: str):
         given the Linked information {information} about a person I want to create:
         1. a short summary
         2. two interesting facts about the person
+        /n {format_instruction}
     """
 
-    summary_prompt_template = PromptTemplate(input_variables="information", template=summary_template)
+    summary_prompt_template = PromptTemplate(
+                                    input_variables="information",
+                                    template=summary_template,
+                                    partial_variables= {"format_instruction": summary_parser.get_format_instructions()}
+                                    )
 
-    # llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+    # llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")eden
 
     llm = ChatOllama(model="llama3")
 
-    chain = summary_prompt_template | llm
+    chain = summary_prompt_template | llm | summary_parser
 
     res = chain.invoke(input={"information": linkedin_profile_data})
 
@@ -46,4 +51,4 @@ if __name__ == '__main__':
     load_dotenv()
     print("Hello user, whom you want to ice break with:")
     user_input = input()
-    ice_break_with("eden marco udemy")
+    ice_break_with(user_input)
